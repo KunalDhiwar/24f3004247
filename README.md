@@ -10,4 +10,4 @@ A web application for managing trekking activities. The system supports three ty
 
 ## Status
 
-Under Development
+Under Development.
