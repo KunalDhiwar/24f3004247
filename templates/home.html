@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>TMS</title>
+      
+      <link rel="stylesheet" href="{{url_for('static', filename='style.css' )}}">
+      
+</head>
+<body>
+<!--Header-->
+<header>
+      <div class="logo">
+            <img src="{{ url_for('static', filename='image/TMS_logo.png') }}"
+                  alt="TrekEase Logo">
+      </div>
+
+      <div class="nav-buttons">
+            <a href="/login">
+                  Login
+            </a>
+
+            <a href="/register">
+                  Register
+            </a>
+      </div>
+</header>
+
+<!--Hero section-->
+<section class="hero">
+      <h1>
+            Explore Amazing Treks
+      </h1>
+      <p>
+            Find your next adventure by location, trek name or difficulty level
+      </p>
+
+      <!--Search form-->
+      <div class="search-box">
+            <form action="/search" method="GET">
+                  <input type="text" name="query" placeholder="Search trek, location....">
+
+                  <button type="submit">
+                        Search
+                  </button>
+            </form>
+      </div>
+</section>
+
+<!--Search result-->
+<section class="results">
+      <h2>
+            Available Trek Results
+      </h2>
+
+      {% if treks %}
+            {% for trek in treks %}
+                  <a href="/trek/{{ trek.id }}" class="trek_link">
+                  <div class="trek-card">
+                        <h3>
+                              {{ trek.name }}
+                        </h3>
+                        <p class="secondary">
+                              Location:
+                              {{ trek.location }}
+                        </p>
+                        <p class="secondary">
+                              Difficulty:
+                              {{ trek.difficulty }}
+                        </p>
+                        <p class="secondary">
+                              Status:
+                              {{ trek.status }}
+                        </p>
+                        <p class="secondary">
+                              Available slot:
+                              {{ trek.available_slot}}
+                        </p>
+                  </div>
+                  </a>
+            {% endfor %}
+      {% else %}
+                  <p class="secondary">
+                        Search for a trek to see result.
+                  </p>
+      {% endif %}
+</section>
+
+</body>
+</html>
