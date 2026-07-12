@@ -11,6 +11,7 @@ class Users(db.Model):
       name = db.Column(db.Unicode(50), nullable=False)
       email = db.Column(db.Unicode(50), unique=True, nullable=False)
       password = db.Column(db.Unicode(50), nullable=False)
+      status = db.Column(Enum("Active", "Deactivated", "Blacklisted"), default='Active')
 
       staff_profile = db.relationship("Staff_Profile", back_populates="user", uselist=False, cascade="all, delete-orphan")
       booking = db.relationship("Booking", back_populates="user", cascade="all, delete-orphan", lazy=True)
@@ -21,7 +22,7 @@ class Staff_Profile(db.Model):
       id = db.Column(db.Integer, primary_key=True)
       user_id = db.Column(db.Integer, db.ForeignKey("user.id"), unique=True, nullable=False)
       trek_id = db.Column(db.Integer, db.ForeignKey("trek.id"))
-      status = db.Column(Enum("Approved", "Pending", name="approve_status"), default="Pending")
+      status = db.Column(Enum("Approved", "Pending", "Blacklisted", name="approve_status"), default="Pending")
 
       user = db.relationship("Users", back_populates="staff_profile")
       trek = db.relationship("Trek", back_populates="staff")

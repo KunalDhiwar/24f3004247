@@ -1,0 +1,741 @@
+/* ==========================================================
+                GLOBAL STYLE
+   ========================================================== */
+
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+
+body{
+
+    background-color:#0f172A;
+
+    color:#ffffff;
+
+    font-family:Arial, Helvetica, sans-serif;
+
+    line-height:1.6;
+
+}
+
+
+
+/* ==========================================================
+                HEADER
+   ========================================================== */
+
+
+header{
+
+    background-color:#1e293b;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:20px 50px;
+
+}
+
+
+
+/* Logo */
+
+
+.logo img{
+
+    height:60px;
+
+    width:auto;
+
+    display:block;
+
+}
+
+
+
+/* Header Right */
+
+
+.header-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+
+
+/* ==========================================================
+                DASHBOARD BUTTON
+   ========================================================== */
+
+
+.dashboard-btn{
+
+    text-decoration:none;
+
+    color:white;
+
+    background:#3b82f6;
+
+    padding:10px 20px;
+
+    border-radius:8px;
+
+    transition:.3s;
+
+}
+
+
+
+.dashboard-btn:hover{
+
+    background:#2563eb;
+
+}
+
+
+
+/* ==========================================================
+                PROFILE DROPDOWN
+   ========================================================== */
+
+
+.profile-menu{
+
+    position:relative;
+
+}
+
+
+
+.profile-btn{
+
+    background:#3b82f6;
+
+    color:white;
+
+    border:none;
+
+    padding:10px 20px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+}
+
+
+
+.profile-btn:hover{
+
+    background:#2563eb;
+
+}
+
+
+
+/* Dropdown Box */
+
+
+.profile-dropdown{
+
+    position:absolute;
+
+    right:0;
+
+    top:55px;
+
+    width:250px;
+
+    background:#1e293b;
+
+    border-radius:10px;
+
+    padding:20px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+
+    display:none;
+
+    z-index:100;
+
+}
+
+
+
+.profile-dropdown.show{
+
+    display:block;
+
+}
+
+
+
+.profile-dropdown p{
+
+    margin-bottom:10px;
+
+    color:#cbd5e1;
+
+}
+
+
+
+.profile-dropdown strong{
+
+    color:white;
+
+}
+
+
+
+.profile-dropdown hr{
+
+    border:none;
+
+    border-top:1px solid #334155;
+
+    margin:15px 0;
+
+}
+
+
+
+.profile-dropdown a{
+
+    display:block;
+
+    text-decoration:none;
+
+    color:white;
+
+    padding:8px 0;
+
+    transition:.3s;
+
+}
+
+
+
+.profile-dropdown a:hover{
+
+    color:#3b82f6;
+
+}
+
+
+
+/* ==========================================================
+                MAIN CONTAINER
+   ========================================================== */
+
+
+.container{
+
+    width:900px;
+
+    margin:40px auto;
+
+}
+
+
+
+/* Form Card Wrapper */
+
+
+.form-card{
+
+    background:#1e293b;
+
+    padding:35px;
+
+    border-radius:15px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+
+}
+
+/* ==========================================================
+                FORM HEADER
+   ========================================================== */
+
+
+.form-card h1{
+
+    text-align:center;
+
+    font-size:32px;
+
+    margin-bottom:10px;
+
+}
+
+
+
+.form-subtitle{
+
+    text-align:center;
+
+    color:#cbd5e1;
+
+    margin-bottom:30px;
+
+}
+
+
+
+/* ==========================================================
+                FORM GRID
+   ========================================================== */
+
+
+.form-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:25px;
+
+    margin-bottom:25px;
+
+}
+
+
+
+/* ==========================================================
+                INPUT BOX
+   ========================================================== */
+
+
+.input-box{
+
+    margin-bottom:5px;
+
+}
+
+
+
+.input-box label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:bold;
+
+    font-size:15px;
+
+}
+
+
+
+.input-box label span{
+
+    color:#ef4444;
+
+}
+
+
+
+/* ==========================================================
+                INPUT FIELDS
+   ========================================================== */
+
+
+.input-box input,
+.input-box select{
+
+
+    width:100%;
+
+    padding:13px;
+
+    background:#0f172A;
+
+    color:white;
+
+    border:none;
+
+    border-radius:8px;
+
+    font-size:15px;
+
+    font-family:inherit;
+
+}
+
+
+
+.input-box input::placeholder{
+
+    color:#94a3b8;
+
+}
+
+
+
+/* Focus Effect */
+
+
+.input-box input:focus,
+.input-box select:focus{
+
+    outline:2px solid #3b82f6;
+
+}
+
+
+
+/* ==========================================================
+                SELECT DROPDOWN
+   ========================================================== */
+
+
+.input-box select{
+
+    cursor:pointer;
+
+    appearance:none;
+
+    -webkit-appearance:none;
+
+    -moz-appearance:none;
+
+}
+
+
+
+.input-box select option{
+
+    background:#0f172A;
+
+    color:white;
+
+}
+
+/* ==========================================================
+                FORM ACTION BUTTONS
+   ========================================================== */
+
+
+.form-actions{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-top:30px;
+
+}
+
+
+
+/* ==========================================================
+                PRIMARY BUTTON
+   ========================================================== */
+
+
+.primary-btn{
+
+    background:#3b82f6;
+
+    color:white;
+
+    border:none;
+
+    padding:13px 30px;
+
+    border-radius:8px;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    text-decoration:none;
+
+    transition:.3s;
+
+}
+
+
+
+.primary-btn:hover{
+
+    background:#2563eb;
+
+}
+
+
+
+/* ==========================================================
+                SECONDARY BUTTON
+   ========================================================== */
+
+
+.secondary-btn{
+
+    background:#334155;
+
+    color:white;
+
+    padding:13px 30px;
+
+    border-radius:8px;
+
+    text-decoration:none;
+
+    font-size:16px;
+
+    transition:.3s;
+
+}
+
+
+
+.secondary-btn:hover{
+
+    background:#475569;
+
+}
+
+
+
+/* ==========================================================
+                FLASH MESSAGES
+   ========================================================== */
+
+
+.flash{
+
+    padding:12px;
+
+    border-radius:8px;
+
+    margin-bottom:20px;
+
+    text-align:center;
+
+    font-weight:bold;
+
+}
+
+
+
+/* Success */
+
+
+.flash.success{
+
+    background:#16a34a;
+
+}
+
+
+
+/* Danger */
+
+
+.flash.danger{
+
+    background:#dc2626;
+
+}
+
+
+
+/* Warning */
+
+
+.flash.warning{
+
+    background:#f59e0b;
+
+    color:black;
+
+}
+
+
+
+/* Info */
+
+
+.flash.info{
+
+    background:#0284c7;
+
+}
+
+/* ==========================================================
+                DATE INPUT STYLING
+   ========================================================== */
+
+
+.input-box input[type="date"]{
+
+    color-scheme:dark;
+
+    cursor:pointer;
+
+}
+
+
+
+/* ==========================================================
+                NUMBER INPUT
+   ========================================================== */
+
+
+.input-box input[type="number"]{
+
+    appearance:textfield;
+
+}
+
+
+
+/* Remove default arrows (Chrome) */
+
+.input-box input[type="number"]::-webkit-inner-spin-button,
+.input-box input[type="number"]::-webkit-outer-spin-button{
+
+    -webkit-appearance:none;
+
+    margin:0;
+
+}
+
+
+
+/* ==========================================================
+                FORM CARD ANIMATION
+   ========================================================== */
+
+
+.form-card{
+
+    animation:formAppear .4s ease;
+
+}
+
+
+
+@keyframes formAppear{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(15px);
+
+    }
+
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+
+
+/* ==========================================================
+                BUTTON CLICK EFFECT
+   ========================================================== */
+
+
+.primary-btn:active,
+.secondary-btn:active,
+.dashboard-btn:active,
+.profile-btn:active{
+
+    transform:scale(.96);
+
+}
+
+
+
+/* ==========================================================
+                REQUIRED FIELD
+   ========================================================== */
+
+
+.input-box label span{
+
+    color:#ef4444;
+
+    font-size:16px;
+
+}
+
+
+
+/* ==========================================================
+                UTILITY CLASSES
+   ========================================================== */
+
+
+.text-center{
+
+    text-align:center;
+
+}
+
+
+
+.text-muted{
+
+    color:#94a3b8;
+
+}
+
+
+
+.mt-20{
+
+    margin-top:20px;
+
+}
+
+
+
+.mb-20{
+
+    margin-bottom:20px;
+
+}
+
+
+
+.hidden{
+
+    display:none;
+
+}
+
+

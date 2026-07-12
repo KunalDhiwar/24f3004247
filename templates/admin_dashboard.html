@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+</head>
+
+<body>
+
+    <!-- ========================= HEADER ========================= -->
+    <header class="dashboard-header">
+        <!-- Logo -->
+        <div class="logo">
+            <a href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='image/TMS_logo.png') }}" alt="Logo">
+            </a>
+        </div>
+
+        <!-- Right Side -->
+        <div class="header-right">
+            <!-- Admin Profile -->
+            <div class="profile-container">
+
+                <button class="profile-btn" id="profileBtn">
+
+                    <div class="profile-info">
+
+                        <span class="admin-name">
+                            {{ session.get("user_name") }}
+                        </span>
+
+                        <span class="admin-role">
+                            Admin
+                        </span>
+                    </div>
+                    <span class="dropdown-icon">
+                        ▼
+                    </span>
+                </button>
+
+                <!-- Profile Dropdown -->
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            {{ session.get("user_name")[0] }}
+                        </div>
+
+                        <div class="profile-details">
+                            <h3>{{ session.get("user_name") }}</h3>
+                            <p>{{ session.get("user_email") }}</p>
+                            <span class="role-badge">
+                                {{ session.get("role") }}
+                            </span>
+                        </div>
+                    </div>
+                    <hr>
+                    <a href="#">
+                        Change Password
+                    </a>
+                    <a href="{{ url_for('logout') }}">
+                        Logout
+                    </a>
+                </div>
+            </div>
+      </div>
+    </header>
+
+    <!-- ========================= MAIN ========================= -->
+    <main class="dashboard-container">
+
+        <!-- Dashboard Heading -->
+        <div class="page-heading">
+            <div>
+                <h1>
+                    Admin Dashboard
+                </h1>
+                <p>
+                    Trek Management System
+                </p>
+            </div>
+        </div>
+
+        <!-- ========================= DASHBOARD CARDS ========================= -->
+
+        <section class="dashboard-cards">
+
+            <!-- Total Users -->
+            <a href="{{ url_for('admin_dashboard', section='users') }}"
+               class="dashboard-card {% if section=='users' %}active{% endif %}">
+
+               <div class="card-content">
+                    <h2>
+                        {{ total_users }}
+                    </h2>
+                    <p>
+                        Trekkers
+                    </p>
+                </div>
+                
+            </a>
+
+            <!-- Total Staff -->
+            <a href="{{ url_for('admin_dashboard', section='staff') }}"
+               class="dashboard-card {% if section=='staff' %}active{% endif %}">
+
+                <div class="card-content">
+                    <h2>
+                        {{ total_staff }}
+                    </h2>
+                    <p>
+                        Trek Staff
+                    </p>
+                </div>
+            </a>
+
+            <!-- Total Treks -->
+
+            <a href="{{ url_for('admin_dashboard', section='treks') }}"
+               class="dashboard-card {% if section=='treks' %}active{% endif %}">
+
+                <div class="card-content">
+                    <h2>
+                        {{ total_treks }}
+                    </h2>
+                    <p>
+                        Treks
+                    </p>
+                </div>
+            </a>
+
+                
+            <!-- Total Bookings -->
+
+            <a href="{{ url_for('admin_dashboard', section='bookings') }}"
+               class="dashboard-card {% if section=='bookings' %}active{% endif %}">
+
+                <div class="card-content">
+                    <h2>
+                        {{ total_bookings }}
+                    </h2>
+                    <p>
+                        Total Bookings
+                    </p>
+                </div>
+            </a>
+
+            <!-- Pending Staff -->
+
+            <a href="{{ url_for('admin_dashboard', section='pending') }}"
+               class="dashboard-card {% if section=='pending' %}active{% endif %}">
+
+                <div class="card-content">
+                    <h2>
+                        {{ pending_staff }}
+                    </h2>
+                    <p>
+                        Pending Staff
+                    </p>
+                </div>
+            </a>
+        </section>
+
+        <!-- ========================= PAGE CONTENT START ========================= -->
+
+        <section class="dashboard-content">
+
+            <!-- ========================= SEARCH BAR ========================= -->
+
+            <div class="table-toolbar">
+
+                <form method="GET"
+                      action="{{ url_for('admin_dashboard') }}"
+                      class="search-form">
+
+                    <input
+                        type="hidden"
+                        name="section"
+                        value="{{ section }}">
+
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Search..."
+                        value="{{ search }}">
+
+                    <button type="submit">
+                        Search
+                    </button>
+                </form>
+
+                <!-- Create Trek -->
+                {% if section == "treks" %}
+
+                <div class="toolbar-actions">
+                    <a href="{{ url_for('create_trek') }}"
+                       class="primary-btn">
+                        + Create Trek
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- ========================= TABLE ========================= -->
+
+            <div class="table-wrapper">
+                <table class="admin-table">
+                    <thead>
+
+                    <!-- USERS -->
+                    {% if section=="users" %}
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                        </tr>
+                    {% endif %}
+
+                    <!-- STAFF -->
+                    {% if section=="staff" %}
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Assigned Trek</th>
+                            <th>Assign</th>
+                            <th>Blacklist</th>
+                        </tr>
+                    {% endif %}
+
+                    <!-- TREKS -->
+                    {% if section=="treks" %}
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Location</th>
+                            <th>Difficulty</th>
+                            <th>Status</th>
+                            <th>Slots</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    {% endif %}
+
+                    <!-- BOOKINGS -->
+                    {% if section=="bookings" %}
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Trek</th>
+                            <th>Booking Date</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                        </tr>
+                    {% endif %}
+
+                    <!-- PENDING -->
+                    {% if section=="pending" %}
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Approve</th>
+                            <th>Reject</th>
+                        </tr>
+                    {% endif %}
+                    </thead>
+
+                    <tbody>
+
+                    <!-- ================================================= -->
+                    <!-- USERS TABLE -->
+                    <!-- ================================================= -->
+
+                    {% if section=="users" %}
+                        {% for user in data.items %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>
+                                <a href="{{ url_for('deactivate_trekker', user_id=user.id) }}"
+                                   class="danger-btn">
+                                    Deactivate
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- ================================================= -->
+                    <!-- STAFF TABLE -->
+                    <!-- ================================================= -->
+
+                    {% if section=="staff" %}
+                        {% for staff in data.items %}
+                        <tr>
+                            <td>
+                                {{ staff.id }}
+                            </td>
+                            <td>
+                                {{ staff.name }}
+                            </td>
+                            <td>
+                                {{ staff.email }}
+                            </td>
+                            <td>
+                                {% if staff.staff_profile %}
+                                    <span class="status-badge">
+                                        {{ staff.staff_profile.status }}
+                                    </span>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if staff.staff_profile %}
+                                    {% if staff.staff_profile.trek %}
+                                        {{ staff.staff_profile.trek.name }}
+                                    {% else %}
+                                        Not Assigned
+                                    {% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if staff.staff_profile %}
+                                <a href="{{ url_for('assign_staff', staff_id=staff.staff_profile.id) }}"
+                                    class="primary-btn">
+                                        Assign Trek
+                                </a>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if staff.staff_profile %}
+                                <a href="{{ url_for('blacklist_staff', staff_id=staff.staff_profile.id) }}"
+                                    class="danger-btn">
+                                        Blacklist
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- ================================================= -->
+                    <!-- TREKS TABLE -->
+                    <!-- ================================================= -->
+
+                    {% if section=="treks" %}
+                        {% for trek in data.items %}
+                        <tr>
+                            <td>{{ trek.id }}</td>
+                            <td>{{ trek.name }}</td>
+                            <td>{{ trek.location }}</td>
+                            <td>{{ trek.difficulty }}</td>
+                            <td>
+                                <span class="status-badge">
+                                    {{ trek.status }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {{ trek.available_slot }}/{{ trek.total_slot }}
+                            </td>
+
+                            <td>
+                                <a href="{{ url_for('trek_info', trek_id=trek.id) }}" class="info-btn">
+                                    Info
+                                </a>
+                            </td>
+
+                            <td>
+                                <a href="{{ url_for('edit_trek', trek_id=trek.id) }}"
+                                   class="edit-btn">
+                                    Edit
+                                </a>
+                            </td>
+
+                            <td>
+                                <a href="{{ url_for('delete_trek', trek_id=trek.id) }}"
+                                   class="danger-btn">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- ================================================= -->
+                    <!-- BOOKINGS TABLE -->
+                    <!-- ================================================= -->
+
+                    {% if section=="bookings" %}
+                        {% for booking in data.items %}
+                        <tr>
+                            <td>{{ booking.id }}</td>
+                            <td>{{ booking.user.name }}</td>
+                            <td>{{ booking.trek.name }}</td>
+                            <td>{{ booking.booking_date }}</td>
+                            <td>
+                                <span class="status-badge">
+                                    {{ booking.status }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="payment-badge">
+                                    {{ booking.payment }}
+                                </span>
+                              </td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- ================================================= -->
+                    <!-- PENDING STAFF TABLE -->
+                    <!-- ================================================= -->
+
+                    {% if section=="pending" %}
+                        {% for staff in data.items %}
+                        <tr>
+                            <td>
+                                {{ staff.id }}
+                            </td>
+                            <td>
+                                {{ staff.user.name }}
+                            </td>
+                            <td>
+                                {{ staff.user.email }}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('approve_staff', staff_id=staff.id) }}"
+                                   class="success-btn">
+                                    Approve
+                                </a>
+                            </td>
+
+                            <td>
+                              <a href="{{ url_for('reject_staff', staff_id=staff.id) }}"
+                                   class="danger-btn">
+                                    Reject
+                              </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- ================================================= -->
+                    <!-- NO RECORD FOUND -->
+                    <!-- ================================================= -->
+
+                    {% if data and data.items|length == 0 %}
+                        <tr>
+                            <td colspan="10" class="no-data">
+                                No Records Found
+                            </td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ========================= PAGINATION ========================= -->
+
+            {% if data and data.pages > 1 %}
+            <div class="pagination">
+
+                <!-- Previous -->
+                {% if data.has_prev %}
+                    <a href="{{ url_for(
+                        'admin_dashboard',
+                        section=section,
+                        page=data.prev_num,
+                        search=search
+                    ) }}">
+                        &laquo; Previous
+                    </a>
+                {% else %}
+                    <span class="disabled">
+                        &laquo; Previous
+                    </span>
+                {% endif %}
+
+                <!-- Page Numbers -->
+
+                {% for page_num in data.iter_pages(
+                    left_edge=1,
+                    right_edge=1,
+                    left_current=2,
+                    right_current=2
+                ) %}
+
+                    {% if page_num %}
+                        {% if page_num == data.page %}
+                            <span class="current">
+                                {{ page_num }}
+                            </span>
+
+                        {% else %}
+                            <a href="{{ url_for(
+                                'admin_dashboard',
+                                section=section,
+                                page=page_num,
+                                search=search
+                            ) }}">
+                                {{ page_num }}
+                            </a>
+                        {% endif %}
+
+                    {% else %}
+                        <span class="dots">
+                            ...
+                        </span>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Next -->
+
+                {% if data.has_next %}
+                    <a href="{{ url_for(
+                        'admin_dashboard',
+                        section=section,
+                        page=data.next_num,
+                        search=search
+                    ) }}">
+                        Next &raquo;
+                    </a>
+
+                {% else %}
+                    <span class="disabled">
+                        Next &raquo;
+                    </span>
+                {% endif %}
+            </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <!-- ========================= JAVASCRIPT ========================= -->
+
+    <script src="{{ url_for('static', filename='js/admin_dashboard.js') }}"></script>
+</body>
+</html>

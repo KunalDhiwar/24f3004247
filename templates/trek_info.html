@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trek Information</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/trek_info.css') }}">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+
+        <!-- Logo -->
+        <div class="logo">
+                <img src="{{ url_for('static', filename='image/TMS_logo.png') }}" alt="Logo">
+        </div>
+
+        <div class="header-right">
+
+            <div class="profile-dropdown">
+
+                <button class="profile-btn">
+                    {{ session['name'] }} ▼
+                </button>
+
+                <div class="dropdown-content">
+                    <p><strong>{{ session['name'] }}</strong></p>
+                    <p>{{ session['email'] }}</p>
+                    <p>{{ session['role'] }}</p>
+
+                    <hr>
+
+                    <a href="#">Change Password</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <div class="info-card">
+
+            <h2>Trek Information</h2>
+
+            <div class="info-grid">
+
+                <div class="label">Trek Name</div>
+                <div class="value">{{ trek.name }}</div>
+
+                <div class="label">Location</div>
+                <div class="value">{{ trek.location }}</div>
+
+                <div class="label">Difficulty</div>
+                <div class="value">{{ trek.difficulty }}</div>
+
+                <div class="label">Status</div>
+                <div class="value">{{ trek.status }}</div>
+
+                <div class="label">Price</div>
+                <div class="value">₹ {{ trek.price }}</div>
+
+                <div class="label">Total Slots</div>
+                <div class="value">{{ trek.total_slot }}</div>
+
+                <div class="label">Available Slots</div>
+                <div class="value">{{ trek.available_slot }}</div>
+
+                <div class="label">Start Date</div>
+                <div class="value">{{ trek.start_date }}</div>
+
+                <div class="label">End Date</div>
+                <div class="value">{{ trek.end_date }}</div>
+
+                <div class="label">Assigned Staff</div>
+                <div class="value">
+
+                    {% if trek.staff_profiles %}
+
+                        {% for staff in trek.staff_profiles %}
+                            {{ staff.user.name }}
+                            {% if not loop.last %}, {% endif %}
+                        {% endfor %}
+
+                    {% else %}
+
+                        Not Assigned
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="button-group">
+
+                <a href="{{ url_for('edit_trek', trek_id=trek.id) }}"
+                   class="edit-btn">
+                    Edit Trek
+                </a>
+
+                <a href="{{ url_for('admin_dashboard', section='treks') }}"
+                   class="back-btn">
+                    Back
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+

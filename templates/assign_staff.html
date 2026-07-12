@@ -1,0 +1,217 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Assign Staff</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/assign_staff.css') }}">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        Trek Management System
+    </div>
+
+
+    <div class="header-right">
+
+        <div class="profile-dropdown">
+
+            <button class="profile-btn">
+                {{ session['name'] }} ▼
+            </button>
+
+
+            <div class="dropdown-content">
+
+                <p><strong>{{ session['name'] }}</strong></p>
+
+                <p>{{ session['email'] }}</p>
+
+                <p>{{ session['role'] }}</p>
+
+
+                <hr>
+
+
+                <a href="#">
+                    Change Password
+                </a>
+
+                <a href="{{ url_for('logout') }}">
+                    Logout
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</header>
+
+
+
+<div class="container">
+
+
+    <div class="assign-card">
+
+
+        <h2>
+            Assign Staff To Trek
+        </h2>
+
+
+
+        <div class="staff-info">
+
+
+            <div class="info-row">
+
+                <span>
+                    Staff Name
+                </span>
+
+                <strong>
+                    {{ staff.user.name }}
+                </strong>
+
+            </div>
+
+
+
+            <div class="info-row">
+
+                <span>
+                    Email
+                </span>
+
+                <strong>
+                    {{ staff.user.email }}
+                </strong>
+
+            </div>
+
+
+
+            <div class="info-row">
+
+                <span>
+                    Current Trek
+                </span>
+
+
+                <strong>
+
+                {% if staff.trek %}
+
+                    {{ staff.trek.name }}
+
+                {% else %}
+
+                    Not Assigned
+
+                {% endif %}
+
+                </strong>
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+        <form method="POST">
+
+
+            <label>
+                Select Trek
+            </label>
+
+
+            <select name="trek_id" required>
+
+
+                <option value="">
+                    -- Select Trek --
+                </option>
+
+
+
+                {% for trek in treks %}
+
+
+                <option value="{{ trek.id }}">
+
+                    {{ trek.name }}
+                    -
+                    {{ trek.location }}
+
+                    ({{ trek.status }})
+
+                </option>
+
+
+                {% endfor %}
+
+
+
+            </select>
+
+
+
+            <div class="button-group">
+
+
+                <button type="submit"
+                        class="assign-btn">
+
+                    Assign Trek
+
+                </button>
+
+
+
+                <a href="{{ url_for('admin_dashboard', section='staff') }}"
+                   class="back-btn">
+
+                    Back
+
+                </a>
+
+
+            </div>
+
+
+        </form>
+
+
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>
+

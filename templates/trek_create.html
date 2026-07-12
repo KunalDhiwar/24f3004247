@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+
+        {% if trek %}
+            Edit Trek
+        {% else %}
+            Create Trek
+        {% endif %}
+
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/create_trek.css') }}">
+
+</head>
+
+<body>
+
+    <!-- ==========================
+            HEADER
+    =========================== -->
+
+    <header>
+
+        <!-- Logo -->
+
+        <div class="logo">
+
+            <a href="{{ url_for('admin_dashboard') }}">
+
+                <img src="{{ url_for('static', filename='images/logo.png') }}"
+                     alt="Logo">
+
+            </a>
+
+        </div>
+
+
+        <!-- Right Side -->
+
+        <div class="header-right">
+
+            <!-- Dashboard Button -->
+
+            <a href="{{ url_for('admin_dashboard', section='treks') }}"
+               class="dashboard-btn">
+
+                ← Dashboard
+
+            </a>
+
+
+            <!-- Admin Profile -->
+
+            <div class="profile-menu">
+
+                <button id="profileBtn" class="profile-btn">
+
+                    {{ session["user_name"] }}
+
+                    ▼
+
+                </button>
+
+
+                <div id="profileDropdown"
+                     class="profile-dropdown">
+
+                    <p>
+
+                        <strong>Name :</strong>
+
+                        {{ session["user_name"] }}
+
+                    </p>
+
+                    <p>
+
+                        <strong>Email :</strong>
+
+                        <!-- Future me database se -->
+                        --
+
+                    </p>
+
+                    <p>
+
+                        <strong>Role :</strong>
+
+                        {{ session["role"] }}
+
+                    </p>
+
+                    <hr>
+
+                    <a href="#">
+
+                        Change Password
+
+                    </a>
+
+                    <a href="{{ url_for('logout') }}">
+
+                        Logout
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- ==========================
+            MAIN CONTAINER
+    =========================== -->
+
+    <main class="container">
+
+
+        <!-- Flash Messages -->
+
+        {% with messages = get_flashed_messages(with_categories=True) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="flash {{ category }}">
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- Form Card -->
+
+        <div class="form-card">
+
+
+            <h1>
+
+                {% if trek %}
+
+                    Edit Trek
+
+                {% else %}
+
+                    Create Trek
+
+                {% endif %}
+
+            </h1>
+
+
+            <p class="form-subtitle">
+
+                {% if trek %}
+
+                    Update trek details.
+
+                {% else %}
+
+                    Fill all required details to create a new trek.
+
+                {% endif %}
+
+            </p>
+
+
+            <form method="POST">
+
+                                  <!-- ==========================
+                        Trek Information
+                =========================== -->
+
+                <div class="form-grid">
+
+                    <!-- Trek Name -->
+
+                    <div class="input-box">
+
+                        <label for="name">
+
+                            Trek Name <span>*</span>
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Enter trek name"
+                            value="{{ trek.name if trek else '' }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Location -->
+
+                    <div class="input-box">
+
+                        <label for="location">
+
+                            Location <span>*</span>
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="location"
+                            name="location"
+                            placeholder="Enter trek location"
+                            value="{{ trek.location if trek else '' }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Difficulty -->
+
+                    <div class="input-box">
+
+                        <label for="difficulty">
+
+                            Difficulty <span>*</span>
+
+                        </label>
+
+                        <select
+                            id="difficulty"
+                            name="difficulty"
+                            required
+                        >
+
+                            <option value="Easy"
+                                {% if trek and trek.difficulty == "Easy" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Easy
+                            </option>
+
+                            <option value="Medium"
+                                {% if trek and trek.difficulty == "Medium" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Medium
+                            </option>
+
+                            <option value="Hard"
+                                {% if trek and trek.difficulty == "Hard" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Hard
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Total Slots -->
+
+                    <div class="input-box">
+
+                        <label for="total_slot">
+
+                            Total Slots <span>*</span>
+
+                        </label>
+
+                        <input
+                            type="number"
+                            id="total_slot"
+                            name="total_slot"
+                            min="1"
+                            placeholder="Enter total slots"
+                            value="{{ trek.total_slot if trek else '' }}"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+                                <!-- ==========================
+                        Trek Schedule
+                =========================== -->
+
+                <div class="form-grid">
+
+                    <!-- Start Date -->
+
+                    <div class="input-box">
+
+                        <label for="start_date">
+
+                            Start Date <span>*</span>
+
+                        </label>
+
+                        <input
+                            type="date"
+                            id="start_date"
+                            name="start_date"
+                            value="{{ trek.start_date.strftime('%Y-%m-%d') if trek and trek.start_date else '' }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- End Date -->
+
+                    <div class="input-box">
+
+                        <label for="end_date">
+
+                            End Date <span>*</span>
+
+                        </label>
+
+                        <input
+                            type="date"
+                            id="end_date"
+                            name="end_date"
+                            value="{{ trek.end_date.strftime('%Y-%m-%d') if trek and trek.end_date else '' }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Price -->
+
+                    <div class="input-box">
+
+                        <label for="price">
+
+                            Price (₹) <span>*</span>
+
+                        </label>
+
+                        <input
+                            type="number"
+                            id="price"
+                            name="price"
+                            min="0"
+                            placeholder="Enter trek price"
+                            value="{{ trek.price if trek else '' }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Status (Edit Mode Only) -->
+
+                    {% if trek %}
+
+                    <div class="input-box">
+
+                        <label for="status">
+
+                            Trek Status
+
+                        </label>
+
+                        <select
+                            id="status"
+                            name="status"
+                        >
+
+                            <option value="Pending"
+                                {% if trek.status=="Pending" %}selected{% endif %}>
+                                Pending
+                            </option>
+
+                            <option value="Approved"
+                                {% if trek.status=="Approved" %}selected{% endif %}>
+                                Approved
+                            </option>
+
+                            <option value="Open"
+                                {% if trek.status=="Open" %}selected{% endif %}>
+                                Open
+                            </option>
+
+                            <option value="Closed"
+                                {% if trek.status=="Closed" %}selected{% endif %}>
+                                Closed
+                            </option>
+
+                            <option value="Completed"
+                                {% if trek.status=="Completed" %}selected{% endif %}>
+                                Completed
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ==========================
+                        Form Buttons
+                =========================== -->
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+
+                        {% if trek %}
+
+                            Update Trek
+
+                        {% else %}
+
+                            Create Trek
+
+                        {% endif %}
+
+                    </button>
+
+
+                    <a
+                        href="{{ url_for('admin_dashboard', section='treks') }}"
+                        class="secondary-btn"
+                    >
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+                            </form>
+
+
+        </div>
+
+    </main>
+
+
+
+    <!-- ==========================
+            JAVASCRIPT
+    =========================== -->
+
+    <script src="{{ url_for('static', filename='admin_dashboard.js') }}"></script>
+
+
+</body>
+
+</html>
