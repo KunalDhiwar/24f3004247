@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 from models import db, default_user
 from models import Trek, Users, Booking, Staff_Profile
-#from decoraters import login_required, role_required
+from decoraters import login_required, role_required
 from dotenv import load_dotenv
 import os
 from datetime import datetime
@@ -147,7 +147,7 @@ def login():
 
 
 @app.route("/logout")
-#@login_required
+@login_required
 def logout():
     session.clear()
     flash("Logged out successfully.", "info")
@@ -155,7 +155,7 @@ def logout():
 
 
 @app.route("/admin_dashboard")
-#@role_required("Admin")
+@role_required("Admin")
 def admin_dashboard():
 
     section = request.args.get("section", "pending")
@@ -219,7 +219,7 @@ def admin_dashboard():
     )
 
 @app.route("/create_trek", methods=["GET", "POST"])
-#@role_required("Admin")
+@role_required("Admin")
 def create_trek():
     if request.method == "POST":
         name = request.form["name"].strip()
@@ -331,7 +331,7 @@ def create_trek():
 
 
 @app.route("/edit_trek/<int:trek_id>", methods=["GET", "POST"])
-#@role_required("Admin")
+@role_required("Admin")
 def edit_trek(trek_id):
     trek = Trek.query.get_or_404(trek_id)
 
@@ -513,7 +513,7 @@ def edit_trek(trek_id):
     )
 
 @app.route("/delete_trek/<int:trek_id>")
-#@role_required("Admin")
+@role_required("Admin")
 def delete_trek(trek_id):
     trek = Trek.query.get_or_404(trek_id)
 
@@ -538,7 +538,7 @@ def delete_trek(trek_id):
 
 
 @app.route('/trek_info/<int:trek_id>')
-#@role_required("Admin", "Trek Staff", "Trekker")
+@role_required("Admin", "Trek Staff", "Trekker")
 def trek_info(trek_id):
 
     # Get Trek
@@ -554,7 +554,7 @@ def trek_info(trek_id):
 
 
 @app.route('/deactivate_trekker/<int:user_id>')
-#@role_required("Admin")
+@role_required("Admin")
 def deactivate_trekker(user_id):
 
     # Find User
@@ -585,7 +585,7 @@ def deactivate_trekker(user_id):
 
 
 @app.route('/approve_staff/<int:staff_id>')
-#@role_required("Admin")
+@role_required("Admin")
 def approve_staff(staff_id):
 
     staff = Staff_Profile.query.get(staff_id)
@@ -612,7 +612,7 @@ def approve_staff(staff_id):
 
 
 @app.route('/reject_staff/<int:staff_id>')
-#@role_required("Admin")
+@role_required("Admin")
 def reject_staff(staff_id):
 
     staff = Staff_Profile.query.get(staff_id)
@@ -638,7 +638,7 @@ def reject_staff(staff_id):
 
 
 @app.route('/assign_staff/<int:staff_id>', methods=['GET', 'POST'])
-#@role_required("Admin")
+@role_required("Admin")
 def assign_staff(staff_id):
 
     staff = Staff_Profile.query.get(staff_id)
@@ -701,7 +701,7 @@ def assign_staff(staff_id):
 
 
 @app.route('/blacklist_staff/<int:staff_id>')
-#@role_required("Admin")
+@role_required("Admin")
 def blacklist_staff(staff_id):
 
     staff = Staff_Profile.query.get(staff_id)
@@ -737,7 +737,7 @@ def blacklist_staff(staff_id):
 
 
 @app.route('/staff_dashboard', methods=["GET", "POST"])
-#@role_required("Trek Staff")
+@role_required("Trek Staff")
 def staff_dashboard():
 
     section = request.args.get("section","trek")
@@ -895,6 +895,7 @@ def staff_dashboard():
 
 
 @app.route('/trekker_dashboard')
+@role_required("Trekker")
 def trekker_dashboard():
 
     # Logged-in user
@@ -1101,31 +1102,10 @@ def trekker_dashboard():
 
 
 @app.route('/book_trek/<int:trek_id>')
+@role_required("Trekker")
 def book_trek(trek_id):
 
-    # =========================
-    # Login Check
-    # =========================
-
-    user_id = session.get("user_id")
-
-
-    if not user_id:
-
-        flash(
-            "Please login first.",
-            "warning"
-        )
-
-        return redirect(
-            url_for("login")
-        )
-
-
-
     user = Users.query.get(user_id)
-
-
 
     if not user:
 
@@ -1315,17 +1295,8 @@ def book_trek(trek_id):
 
 
 @app.route('/cancel_booking/<int:booking_id>')
+@role_required("Trekkers")
 def cancel_booking(booking_id):
-
-    # =========================
-    # Login Check
-    # =========================
-
-    user_id = session.get("user_id")
-
-    if not user_id:
-        flash("Please login first.", "warning")
-        return redirect(url_for("login"))
 
     user = Users.query.get(user_id)
 
