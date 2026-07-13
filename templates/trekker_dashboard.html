@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Trekker Dashboard</title>
+
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/trekker_dashboard.css') }}">
+
+
+</head>
+
+
+<body>
+
+
+
+<!-- ================= HEADER ================= -->
+
+
+<header class="dashboard-header">
+
+
+<div class="logo">
+
+<a href="{{ url_for('home') }}">
+
+<img src="{{ url_for('static', filename='image/TMS_logo.png') }}">
+
+</a>
+
+</div>
+
+
+
+<div class="header-right">
+
+
+<div class="profile-container">
+
+
+
+<button class="profile-btn" id="profileBtn">
+
+
+<div class="profile-info">
+
+
+<span class="admin-name">
+
+{{ session.get("user_name") }}
+
+</span>
+
+
+<span class="admin-role">
+
+Trekker
+
+</span>
+
+
+</div>
+
+
+
+<span class="dropdown-icon">
+
+▼
+
+</span>
+
+
+
+</button>
+
+
+
+
+
+<div class="profile-dropdown"
+id="profileDropdown">
+
+
+<div class="profile-header">
+
+
+<div class="profile-avatar">
+
+{{ session.get("user_name")[0] }}
+
+</div>
+
+
+
+<div class="profile-details">
+
+
+<h3>
+
+{{ session.get("user_name") }}
+
+</h3>
+
+
+<p>
+
+{{ session.get("user_email") }}
+
+</p>
+
+
+
+<span class="role-badge">
+
+{{ session.get("role") }}
+
+</span>
+
+
+</div>
+
+
+</div>
+
+
+<hr>
+
+
+<a href="#">
+
+Change Password
+
+</a>
+
+
+<a href="{{ url_for('logout') }}">
+
+Logout
+
+</a>
+
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</header>
+
+
+
+
+
+<!-- ================= MAIN ================= -->
+
+
+<main class="dashboard-container">
+
+
+
+<div class="page-heading">
+
+
+<div>
+
+<h1>
+
+Trekker Dashboard
+
+</h1>
+
+
+<p>
+
+Trek Management System
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<!-- ================= CARDS ================= -->
+
+
+<section class="dashboard-cards">
+
+
+
+<!-- AVAILABLE TREKS -->
+
+
+<a href="{{ url_for(
+'trekker_dashboard',
+section='treks'
+)}}"
+
+class="dashboard-card 
+{% if section=='treks' %}active{% endif %}">
+
+
+<div class="card-content">
+
+
+<h2>
+
+{{ available_treks }}
+
+</h2>
+
+
+<p>
+
+Available Treks
+
+</p>
+
+
+</div>
+
+
+</a>
+
+
+
+
+
+<!-- BOOKINGS -->
+
+
+<a href="{{ url_for(
+'trekker_dashboard',
+section='bookings'
+)}}"
+
+class="dashboard-card 
+{% if section=='bookings' %}active{% endif %}">
+
+
+<div class="card-content">
+
+
+<h2>
+
+{{ my_bookings }}
+
+</h2>
+
+
+<p>
+
+My Bookings
+
+</p>
+
+
+</div>
+
+
+</a>
+
+
+
+
+
+<!-- HISTORY -->
+
+
+<a href="{{ url_for(
+'trekker_dashboard',
+section='history'
+)}}"
+
+class="dashboard-card 
+{% if section=='history' %}active{% endif %}">
+
+
+<div class="card-content">
+
+
+<h2>
+
+{{ history_count }}
+
+</h2>
+
+
+<p>
+
+History
+
+</p>
+
+
+</div>
+
+
+</a>
+
+
+
+</section>
+
+
+
+
+
+
+
+<!-- ================= CONTENT ================= -->
+
+
+<section class="dashboard-content">
+
+
+
+
+
+<!-- ================= SEARCH ================= -->
+
+
+{% if section=="treks" %}
+
+
+<div class="table-toolbar">
+
+
+
+<form method="GET"
+action="{{ url_for('trekker_dashboard') }}"
+class="search-form">
+
+
+<input type="hidden"
+name="section"
+value="treks">
+
+
+
+<input type="text"
+name="search"
+placeholder="Search trek name or location..."
+value="{{ search }}">
+
+
+
+<button type="submit">
+
+Search
+
+</button>
+
+
+
+</form>
+
+
+</div>
+
+
+{% endif %}
+
+
+
+
+
+
+
+
+
+<!-- ================= TABLE ================= -->
+
+
+<div class="table-wrapper">
+
+
+<table class="admin-table">
+
+
+
+<thead>
+
+
+
+<!-- TREKS -->
+
+
+{% if section=="treks" %}
+
+
+<tr>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>Location</th>
+
+<th>Difficulty</th>
+
+<th>Date</th>
+
+<th>Slots</th>
+
+<th>Price</th>
+
+<th>Action</th>
+
+
+</tr>
+
+
+{% endif %}
+
+
+
+
+
+<!-- BOOKINGS -->
+
+
+{% if section=="bookings" %}
+
+
+<tr>
+
+<th>ID</th>
+
+<th>Trek</th>
+
+<th>Date</th>
+
+<th>Status</th>
+
+<th>Cancle Booking</th>
+
+<th>Payment</th>
+
+
+</tr>
+
+
+{% endif %}
+
+
+
+
+
+<!-- HISTORY -->
+
+
+{% if section=="history" %}
+
+
+<tr>
+
+<th>ID</th>
+
+<th>Trek</th>
+
+<th>Booking Date</th>
+
+<th>Status</th>
+
+<th>Payment</th>
+
+
+</tr>
+
+
+{% endif %}
+
+
+
+
+</thead>
+
+
+
+
+
+<tbody>
+
+
+
+
+
+
+
+<!-- ================= TREK TABLE ================= -->
+
+
+{% if section=="treks" %}
+
+
+
+{% for trek in data.items %}
+
+
+
+<tr>
+
+
+<td>
+
+{{ trek.id }}
+
+</td>
+
+
+<td>
+
+{{ trek.name }}
+
+</td>
+
+
+<td>
+
+{{ trek.location }}
+
+</td>
+
+
+<td>
+
+{{ trek.difficulty }}
+
+</td>
+
+
+<td>
+
+{{ trek.start_date }}
+
+</td>
+
+
+<td>
+
+{{ trek.available_slot }}/{{ trek.total_slot }}
+
+</td>
+
+
+<td>
+
+₹ {{ trek.price }}
+
+</td>
+
+
+
+<td>
+
+
+<a href="{{ url_for('book_trek', trek_id=trek.id) }}"
+   class="primary-btn">
+
+    Book Trek
+
+</a>
+
+
+</td>
+
+
+</tr>
+
+
+
+{% endfor %}
+
+
+
+{% endif %}
+
+
+
+
+
+
+
+
+
+<!-- ================= BOOKINGS ================= -->
+
+
+{% if section=="bookings" %}
+
+
+
+{% for booking in data.items %}
+
+
+
+<tr>
+
+
+<td>
+
+{{ booking.id }}
+
+</td>
+
+
+
+<td>
+
+{{ booking.trek.name }}
+
+</td>
+
+
+
+<td>
+
+{{ booking.booking_date }}
+
+</td>
+
+
+
+<td>
+
+<span class="status-badge">
+
+{{ booking.status }}
+
+</span>
+
+
+</td>
+
+<td>
+{% if booking.status == "Booked" %}
+    <a href="{{ url_for('cancel_booking', booking_id=booking.id) }}"
+       class="danger-btn">
+        Cancel
+    </a>
+    
+{% endif %}
+
+<td>
+
+<span class="payment-badge">
+
+{{ booking.payment }}
+
+</span>
+
+
+</td>
+
+
+
+</tr>
+
+
+
+{% endfor %}
+
+
+
+{% endif %}
+
+
+
+
+
+
+
+
+
+<!-- ================= HISTORY ================= -->
+
+
+{% if section=="history" %}
+
+
+
+{% for booking in data.items %}
+
+
+
+<tr>
+
+
+<td>
+
+{{ booking.id }}
+
+</td>
+
+
+
+<td>
+
+{{ booking.trek.name }}
+
+</td>
+
+
+
+<td>
+
+{{ booking.booking_date }}
+
+</td>
+
+
+
+<td>
+
+<span class="status-badge">
+
+{{ booking.status }}
+
+</span>
+
+
+</td>
+
+
+
+<td>
+
+<span class="payment-badge">
+
+{{ booking.payment }}
+
+</span>
+
+
+</td>
+
+
+
+</tr>
+
+
+
+{% endfor %}
+
+
+
+{% endif %}
+
+
+
+
+
+
+
+{% if data.items|length == 0 %}
+
+
+<tr>
+
+<td colspan="8"
+class="no-data">
+
+No Records Found
+
+</td>
+
+</tr>
+
+
+{% endif %}
+
+
+
+</tbody>
+
+
+
+</table>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- ================= PAGINATION ================= -->
+
+
+{% if data.pages > 1 %}
+
+
+<div class="pagination">
+
+
+
+{% if data.has_prev %}
+
+
+<a href="{{ url_for(
+'trekker_dashboard',
+section=section,
+page=data.prev_num,
+search=search
+)}}">
+
+Previous
+
+</a>
+
+
+{% endif %}
+
+
+
+
+
+{% for page_num in data.iter_pages() %}
+
+
+
+{% if page_num == data.page %}
+
+
+<span class="current">
+
+{{ page_num }}
+
+</span>
+
+
+
+{% else %}
+
+
+<a href="{{ url_for(
+'trekker_dashboard',
+section=section,
+page=page_num,
+search=search
+)}}">
+
+{{ page_num }}
+
+</a>
+
+
+{% endif %}
+
+
+
+{% endfor %}
+
+
+
+
+
+
+
+{% if data.has_next %}
+
+
+<a href="{{ url_for(
+'trekker_dashboard',
+section=section,
+page=data.next_num,
+search=search
+)}}">
+
+Next
+
+</a>
+
+
+{% endif %}
+
+
+
+
+</div>
+
+
+{% endif %}
+
+
+
+
+
+</section>
+
+
+
+
+
+</main>
+
+
+
+
+
+
+<script src="{{ url_for('static', filename='js/admin_dashboard.js') }}"></script>
+
+
+</body>
+
+</html>

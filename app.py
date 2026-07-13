@@ -887,6 +887,492 @@ def staff_dashboard():
     )
 
 
+@app.route('/trekker_dashboard')
+def trekker_dashboard():
+
+    # Logged-in user
+    user_id = session.get("user_id")
+
+    if not user_id:
+        flash(
+            "Please login first.",
+            "warning"
+        )
+        return redirect(url_for("login"))
+
+
+    user = Users.query.get(user_id)
+
+
+    if not user:
+        flash(
+            "User not found.",
+            "danger"
+        )
+        return redirect(url_for("login"))
+
+
+    if user.role != "Trekker":
+
+        flash(
+            "Access denied.",
+            "danger"
+        )
+
+        return redirect(url_for("login"))
+
+
+
+    # =========================
+    # Section Handling
+    # =========================
+
+    section = request.args.get(
+        "section",
+        "treks"
+    )
+
+
+    search = request.args.get(
+        "search",
+        ""
+    ).strip()
+
+
+
+    page = request.args.get(
+        "page",
+        1,
+        type=int
+    )
+
+
+    per_page = 10
+
+
+
+    data = None
+
+
+
+    # =========================
+    # AVAILABLE TREKS
+    # =========================
+
+    if section == "treks":
+
+
+        query = Trek.query.filter_by(
+            status="Open"
+        )
+
+
+
+        if search:
+
+
+            query = query.filter(
+
+                (Trek.name.ilike(
+                    f"%{search}%"
+                ))
+
+                |
+
+                (Trek.location.ilike(
+                    f"%{search}%"
+                ))
+
+            )
+
+
+
+        data = query.paginate(
+
+            page=page,
+
+            per_page=per_page,
+
+            error_out=False
+
+        )
+
+
+
+
+    # =========================
+    # MY BOOKINGS
+    # =========================
+
+
+    elif section == "bookings":
+
+
+        query = Booking.query.filter_by(
+
+            user_id=user.id,
+
+            status="Booked"
+
+        )
+
+
+        data = query.paginate(
+
+            page=page,
+
+            per_page=per_page,
+
+            error_out=False
+
+        )
+
+
+
+
+    # =========================
+    # HISTORY
+    # =========================
+
+
+    elif section == "history":
+
+
+        query = Booking.query.filter_by(
+
+            user_id=user.id
+
+        )
+
+
+
+        data = query.paginate(
+
+            page=page,
+
+            per_page=per_page,
+
+            error_out=False
+
+        )
+
+
+
+
+    return render_template(
+
+        "trekker_dashboard.html",
+
+        section=section,
+
+        data=data,
+
+        search=search,
+
+
+        available_treks=Trek.query.filter_by(
+            status="Open"
+        ).count(),
+
+
+        my_bookings=Booking.query.filter_by(
+
+            user_id=user.id,
+
+            status="Booked"
+
+        ).count(),
+
+
+        history_count=Booking.query.filter_by(
+
+            user_id=user.id
+
+        ).count()
+
+    )
+
+
+@app.route('/book_trek/<int:trek_id>')
+def book_trek(trek_id):
+
+    # =========================
+    # Login Check
+    # =========================
+
+    user_id = session.get("user_id")
+
+
+    if not user_id:
+
+        flash(
+            "Please login first.",
+            "warning"
+        )
+
+        return redirect(
+            url_for("login")
+        )
+
+
+
+    user = Users.query.get(user_id)
+
+
+
+    if not user:
+
+        flash(
+            "User not found.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("login")
+        )
+
+
+
+    # =========================
+    # Role Check
+    # =========================
+
+    if user.role != "Trekker":
+
+        flash(
+            "Only trekkers can book treks.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("trekker_dashboard")
+        )
+
+
+
+
+    # =========================
+    # Trek Check
+    # =========================
+
+    trek = Trek.query.get(trek_id)
+
+
+
+    if not trek:
+
+        flash(
+            "Trek not found.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("trekker_dashboard")
+        )
+
+
+
+
+    # =========================
+    # Status Check
+    # =========================
+
+    if trek.status != "Open":
+
+        flash(
+            "This trek is not available for booking.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "trekker_dashboard",
+                section="treks"
+            )
+        )
+
+
+
+
+    # =========================
+    # Slot Check
+    # =========================
+
+    if trek.available_slot <= 0:
+
+
+        flash(
+            "Sorry, this trek is full.",
+            "warning"
+        )
+
+
+        return redirect(
+            url_for(
+                "trekker_dashboard",
+                section="treks"
+            )
+        )
+
+
+
+
+
+    # =========================
+    # Duplicate Booking Check
+    # =========================
+
+
+    existing_booking = Booking.query.filter_by(
+
+        user_id=user.id,
+
+        trek_id=trek.id,
+
+        status="Booked"
+
+    ).first()
+
+
+
+    if existing_booking:
+
+
+        flash(
+            "You have already booked this trek.",
+            "info"
+        )
+
+
+        return redirect(
+            url_for(
+                "trekker_dashboard",
+                section="treks"
+            )
+        )
+
+
+
+
+
+
+    # =========================
+    # Create Booking
+    # =========================
+
+
+    booking = Booking(
+
+        user_id=user.id,
+
+        trek_id=trek.id,
+
+        booking_date=datetime.today().date(),
+
+        status="Booked",
+
+        payment="Pending"
+
+    )
+
+
+    db.session.add(booking)
+
+
+
+    # Reduce Available Slot
+
+    trek.available_slot -= 1
+
+
+
+    db.session.commit()
+
+
+
+    flash(
+        "Trek booked successfully.",
+        "success"
+    )
+
+
+
+    return redirect(
+
+        url_for(
+            "trekker_dashboard",
+            section="bookings"
+        )
+
+    )
+
+
+@app.route('/cancel_booking/<int:booking_id>')
+def cancel_booking(booking_id):
+
+    # =========================
+    # Login Check
+    # =========================
+
+    user_id = session.get("user_id")
+
+    if not user_id:
+        flash("Please login first.", "warning")
+        return redirect(url_for("login"))
+
+    user = Users.query.get(user_id)
+
+    if not user or user.role != "Trekker":
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("login"))
+
+    # =========================
+    # Booking Check
+    # =========================
+
+    booking = Booking.query.get(booking_id)
+
+    if not booking:
+        flash("Booking not found.", "danger")
+        return redirect(url_for("trekker_dashboard", section="bookings"))
+
+    # =========================
+    # Ownership Check
+    # =========================
+
+    if booking.user_id != user.id:
+        flash("You are not allowed to cancel this booking.", "danger")
+        return redirect(url_for("trekker_dashboard", section="bookings"))
+
+    # =========================
+    # Status Check
+    # =========================
+
+    if booking.status != "Booked":
+        flash("Only booked treks can be cancelled.", "warning")
+        return redirect(url_for("trekker_dashboard", section="bookings"))
+
+    # =========================
+    # Update Booking Status
+    # =========================
+
+    booking.status = "Cancelled"
+
+    # =========================
+    # Restore Slot
+    # =========================
+
+    if booking.trek:
+
+        if booking.trek.available_slot < booking.trek.total_slot:
+            booking.trek.available_slot += 1
+
+    db.session.commit()
+
+    flash("Booking cancelled successfully.", "success")
+
+    return redirect(url_for("trekker_dashboard", section="bookings"))
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
