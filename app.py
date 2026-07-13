@@ -804,6 +804,13 @@ def staff_dashboard():
                 "Completed trek status cannot be changed.",
                 "warning"
             )
+            for booking in trek.booking:
+
+                if booking.status == "Booked":
+
+                    booking.status = "Completed"
+
+                    booking.payment = "Completed"
 
         elif new_status != allowed_status.get(trek.status):
 
