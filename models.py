@@ -11,7 +11,7 @@ class Users(db.Model):
       name = db.Column(db.Unicode(50), nullable=False)
       email = db.Column(db.Unicode(50), unique=True, nullable=False)
       password = db.Column(db.Unicode(50), nullable=False)
-      status = db.Column(Enum("Active", "Deactivated", "Blacklisted"), default='Active')
+      status = db.Column(Enum("Active", "Deactivated"), default='Active')
 
       staff_profile = db.relationship("Staff_Profile", back_populates="user", uselist=False, cascade="all, delete-orphan")
       booking = db.relationship("Booking", back_populates="user", cascade="all, delete-orphan", lazy=True)

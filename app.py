@@ -735,6 +735,158 @@ def blacklist_staff(staff_id):
         url_for('admin_dashboard', section='staff')
     )
 
+
+@app.route('/staff_dashboard', methods=["GET", "POST"])
+#@role_required("Trek Staff")
+def staff_dashboard():
+
+    section = request.args.get("section","trek")
+
+    # Get Logged-in User
+    user = Users.query.get(session.get("user_id"))
+    
+
+    if not user:
+        flash("User not found.", "danger")
+        return redirect(url_for("login"))
+
+
+    # Get Staff Profile
+    staff = user.staff_profile
+
+    if not staff:
+        flash("Staff profile not found.", "danger")
+        return redirect(url_for("login"))
+
+
+    # Access Control
+    if staff.status != "Approved":
+        flash("You are not authorized to access this dashboard.", "warning")
+        return redirect(url_for("login"))
+
+
+    # Assigned Trek
+    trek = staff.trek
+
+
+    # =========================
+    # Status Update
+    # =========================
+
+    if request.method == "POST":
+
+        if not trek:
+            flash(
+                "No trek assigned to update.",
+                "warning"
+            )
+            return redirect(url_for("staff_dashboard"))
+
+
+        new_status = request.form.get("status")
+
+
+        # Valid Status Flow
+
+        allowed_status = {
+
+            "Approved": "Open",
+
+            "Open": "Closed",
+
+            "Closed": "Completed"
+
+        }
+
+
+        if trek.status == "Completed":
+            flash(
+                "Completed trek status cannot be changed.",
+                "warning"
+            )
+
+        elif new_status != allowed_status.get(trek.status):
+
+            flash(
+                "Invalid status update.",
+                "danger"
+            )
+
+        else:
+
+            trek.status = new_status
+
+            db.session.commit()
+
+            flash(
+                "Trek status updated successfully.",
+                "success"
+            )
+
+
+        return redirect(
+            url_for("staff_dashboard")
+        )
+
+
+    # =========================
+    # Dashboard Cards
+    # =========================
+
+    assigned_trek = 0
+    total_participants = 0
+
+
+    # Participant Pagination
+
+    page = request.args.get(
+        "page",
+        1,
+        type=int
+    )
+
+    per_page = 10
+
+
+    participants = None
+
+
+    if trek:
+
+        assigned_trek = 1
+
+
+        participants = Booking.query.filter_by(
+            trek_id=trek.id
+        ).paginate(
+            page=page,
+            per_page=per_page,
+            error_out=False
+        )
+
+
+        total_participants = Booking.query.filter_by(
+            trek_id=trek.id
+        ).count()
+
+
+    return render_template(
+        "staff_dashboard.html",
+
+        staff=staff,
+
+        trek=trek,
+
+        assigned_trek=assigned_trek,
+
+        total_participants=total_participants,
+
+        participants=participants,
+        section=section
+        
+    )
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

@@ -1,0 +1,894 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Trek Staff Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/staff_dashboard.css') }}">
+
+</head>
+
+
+<body>
+
+
+<!-- ========================= HEADER ========================= -->
+
+<header class="dashboard-header">
+
+
+    <!-- Logo -->
+
+    <div class="logo">
+
+        <a href="{{ url_for('home') }}">
+
+            <img src="{{ url_for('static', filename='image/TMS_logo.png') }}"
+                 alt="Logo">
+
+        </a>
+
+    </div>
+
+
+
+    <!-- Profile -->
+
+    <div class="header-right">
+
+
+        <div class="profile-container">
+
+
+            <button class="profile-btn" id="profileBtn">
+
+
+                <div class="profile-info">
+
+
+                    <span class="admin-name">
+
+                        {{ session.get("user_name") }}
+
+                    </span>
+
+
+                    <span class="admin-role">
+
+                        Trek Staff
+
+                    </span>
+
+
+                </div>
+
+
+                <span class="dropdown-icon">
+
+                    ▼
+
+                </span>
+
+
+            </button>
+
+
+
+            <!-- Dropdown -->
+
+
+            <div class="profile-dropdown"
+                 id="profileDropdown">
+
+
+                <div class="profile-header">
+
+
+                    <div class="profile-avatar">
+
+                        {{ session.get("user_name")[0] }}
+
+                    </div>
+
+
+
+                    <div class="profile-details">
+
+
+                        <h3>
+
+                            {{ session.get("user_name") }}
+
+                        </h3>
+
+
+                        <p>
+
+                            {{ session.get("user_email") }}
+
+                        </p>
+
+
+                        <span class="role-badge">
+
+                            {{ session.get("role") }}
+
+                        </span>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <hr>
+
+
+
+                <a href="#">
+
+                    Change Password
+
+                </a>
+
+
+                <a href="{{ url_for('logout') }}">
+
+                    Logout
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</header>
+
+
+
+
+
+<!-- ========================= MAIN ========================= -->
+
+
+<main class="dashboard-container">
+
+
+
+<!-- Heading -->
+
+
+<div class="page-heading">
+
+
+    <div>
+
+        <h1>
+
+            Trek Staff Dashboard
+
+        </h1>
+
+
+        <p>
+
+            Trek Management System
+
+        </p>
+
+
+    </div>
+
+
+</div>
+
+
+
+
+
+<!-- ========================= CARDS ========================= -->
+
+
+<section class="dashboard-cards">
+
+
+<!-- Assigned Trek Card -->
+
+<a href="{{ url_for('staff_dashboard', section='trek') }}"
+   class="dashboard-card {% if section=='trek' %}active{% endif %}">
+
+
+<div class="card-content">
+
+<h2>
+
+{{ assigned_trek }}
+
+</h2>
+
+
+<p>
+
+Assigned Trek
+
+</p>
+
+
+</div>
+
+
+</a>
+
+
+
+
+
+<!-- Participants Card -->
+
+
+<a href="{{ url_for('staff_dashboard', section='participants') }}"
+   class="dashboard-card {% if section=='participants' %}active{% endif %}">
+
+
+<div class="card-content">
+
+
+<h2>
+
+{{ total_participants }}
+
+</h2>
+
+
+<p>
+
+Total Participants
+
+</p>
+
+
+</div>
+
+
+</a>
+
+
+
+</section>
+
+
+
+<!-- ========================= TREK SUMMARY ========================= -->
+
+{% if section=="trek" %}
+<section class="dashboard-content">
+
+
+
+<div class="summary-card">
+
+
+<h2>
+
+Assigned Trek Summary
+
+</h2>
+
+
+
+{% if trek %}
+
+
+
+<div class="summary-grid">
+
+
+
+<div class="summary-item">
+
+<span>Name</span>
+
+<strong>
+
+{{ trek.name }}
+
+</strong>
+
+</div>
+
+
+
+
+
+<div class="summary-item">
+
+<span>Location</span>
+
+<strong>
+
+{{ trek.location }}
+
+</strong>
+
+</div>
+
+
+
+
+
+<div class="summary-item">
+
+<span>Difficulty</span>
+
+<strong>
+
+{{ trek.difficulty }}
+
+</strong>
+
+</div>
+
+
+
+
+
+<div class="summary-item">
+
+<span>Status</span>
+
+<strong>
+
+{{ trek.status }}
+
+</strong>
+
+</div>
+
+
+
+
+
+<div class="summary-item">
+
+<span>Start Date</span>
+
+<strong>
+
+{{ trek.start_date }}
+
+</strong>
+
+</div>
+
+
+
+
+
+<div class="summary-item">
+
+<span>End Date</span>
+
+<strong>
+
+{{ trek.end_date }}
+
+</strong>
+
+</div>
+
+
+
+
+
+<div class="summary-item">
+
+<span>Available Slots</span>
+
+<strong>
+
+{{ trek.available_slot }}/{{ trek.total_slot }}
+
+</strong>
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<!-- ================= STATUS UPDATE ================= -->
+
+
+{% if trek.status != "Completed" %}
+
+
+<div class="status-update">
+
+
+<h3>
+
+Update Trek Status
+
+</h3>
+
+
+
+<form method="POST"
+      action="{{ url_for('staff_dashboard') }}">
+
+
+
+<select name="status">
+
+
+
+{% if trek.status == "Approved" %}
+
+<option value="Open">
+
+Open
+
+</option>
+
+
+
+{% elif trek.status == "Open" %}
+
+<option value="Closed">
+
+Closed
+
+</option>
+
+
+
+{% elif trek.status == "Closed" %}
+
+<option value="Completed">
+
+Completed
+
+</option>
+
+
+
+{% endif %}
+
+
+
+</select>
+
+
+
+<button type="submit">
+
+Update Status
+
+</button>
+
+
+
+</form>
+
+
+</div>
+
+
+{% endif %}
+
+
+
+
+
+{% else %}
+
+
+<div class="no-data">
+
+No trek assigned yet.
+
+</div>
+
+
+{% endif %}
+
+
+
+</div>
+
+
+</section>
+
+{% endif %}
+
+
+
+
+
+
+<!-- ========================= PARTICIPANT TABLE ========================= -->
+
+{% if section=="participants" %}
+<section class="dashboard-content">
+
+<h2 class="section-title">
+
+    Participant List
+
+</h2>
+
+
+
+<div class="table-wrapper">
+
+
+
+<table class="admin-table">
+
+
+
+<thead>
+
+
+<tr>
+
+
+<th>
+
+ID
+
+</th>
+
+
+<th>
+
+Trekker
+
+</th>
+
+
+<th>
+
+Email
+
+</th>
+
+
+<th>
+
+Booking Date
+
+</th>
+
+
+<th>
+
+Status
+
+</th>
+
+
+<th>
+
+Payment
+
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+
+<tbody>
+
+
+
+{% if participants %}
+
+
+
+{% for booking in participants.items %}
+
+
+
+<tr>
+
+
+<td>
+
+{{ booking.id }}
+
+</td>
+
+
+
+<td>
+
+{{ booking.user.name }}
+
+</td>
+
+
+
+<td>
+
+{{ booking.user.email }}
+
+</td>
+
+
+
+<td>
+
+{{ booking.booking_date }}
+
+</td>
+
+
+
+<td>
+
+
+<span class="status-badge">
+
+{{ booking.status }}
+
+</span>
+
+
+</td>
+
+
+
+<td>
+
+
+<span class="payment-badge">
+
+{{ booking.payment }}
+
+</span>
+
+
+</td>
+
+
+
+</tr>
+
+
+
+{% endfor %}
+
+
+
+{% else %}
+
+
+
+<tr>
+
+
+<td colspan="6"
+class="no-data">
+
+No Participants Found
+
+</td>
+
+
+</tr>
+
+
+
+{% endif %}
+
+
+
+</tbody>
+
+
+</table>
+
+
+
+</div>
+
+
+
+</section>
+
+{% endif %}
+
+
+
+
+
+
+<!-- ========================= PAGINATION ========================= -->
+
+
+{% if participants and participants.pages > 1 %}
+
+
+
+<div class="pagination">
+
+
+
+{% if participants.has_prev %}
+
+
+<a href="{{ url_for(
+'staff_dashboard',
+page=participants.prev_num
+) }}">
+
+
+&laquo; Previous
+
+
+</a>
+
+
+{% else %}
+
+
+<span class="disabled">
+
+&laquo; Previous
+
+</span>
+
+
+{% endif %}
+
+
+
+
+
+{% for page_num in participants.iter_pages(
+left_edge=1,
+right_edge=1,
+left_current=2,
+right_current=2
+) %}
+
+
+
+{% if page_num %}
+
+
+
+{% if page_num == participants.page %}
+
+
+<span class="current">
+
+{{ page_num }}
+
+</span>
+
+
+
+{% else %}
+
+
+
+<a href="{{ url_for(
+'staff_dashboard',
+page=page_num
+) }}">
+
+
+{{ page_num }}
+
+
+</a>
+
+
+
+{% endif %}
+
+
+
+{% else %}
+
+
+
+<span class="dots">
+
+...
+
+</span>
+
+
+
+{% endif %}
+
+
+
+{% endfor %}
+
+
+
+
+
+
+{% if participants.has_next %}
+
+
+
+<a href="{{ url_for(
+'staff_dashboard',
+page=participants.next_num
+) }}">
+
+
+Next &raquo;
+
+
+</a>
+
+
+
+{% else %}
+
+
+
+<span class="disabled">
+
+Next &raquo;
+
+</span>
+
+
+
+{% endif %}
+
+
+
+</div>
+
+
+
+{% endif %}
+
+
+
+
+</main>
+
+
+
+
+
+<script src="{{ url_for('static', filename='js/admin_dashboard.js') }}"></script>
+
+
+</body>
+
+</html>
