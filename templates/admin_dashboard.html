@@ -11,6 +11,9 @@
 
 <body>
 
+    <!-- Flash Messages -->
+    {% include "_flash_messages.html" %}
+
     <!-- ========================= HEADER ========================= -->
     <header class="dashboard-header">
         <!-- Logo -->
@@ -243,6 +246,7 @@
                             <th>Difficulty</th>
                             <th>Status</th>
                             <th>Slots</th>
+                            <th>Info</th>
                             <th>Edit</th>
                             <th>Delete</th>
                         </tr>
@@ -300,58 +304,59 @@
                     <!-- ================================================= -->
 
                     {% if section=="staff" %}
-                        {% for staff in data.items %}
-                        <tr>
-                            <td>
-                                {{ staff.id }}
-                            </td>
-                            <td>
-                                {{ staff.name }}
-                            </td>
-                            <td>
-                                {{ staff.email }}
-                            </td>
-                            <td>
-                                {% if staff.staff_profile %}
-                                    <span class="status-badge">
-                                        {{ staff.staff_profile.status }}
-                                    </span>
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
-
-                            <td>
-                                {% if staff.staff_profile %}
-                                    {% if staff.staff_profile.trek %}
-                                        {{ staff.staff_profile.trek.name }}
+                            {% for staff in data.items %}
+                            <tr>
+                                <td>
+                                    {{ staff.id }}
+                                </td>
+                                <td>
+                                    {{ staff.name }}
+                                </td>
+                                <td>
+                                    {{ staff.email }}
+                                </td>
+                                <td>
+                                    {% if staff.staff_profile %}
+                                        <span class="status-badge">
+                                            {{ staff.staff_profile.status }}
+                                        </span>
+                                
                                     {% else %}
-                                        Not Assigned
+                                        -
                                     {% endif %}
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
+                                </td>
 
-                            <td>
-                                {% if staff.staff_profile %}
-                                <a href="{{ url_for('assign_staff', staff_id=staff.staff_profile.id) }}"
-                                    class="primary-btn">
-                                        Assign Trek
-                                </a>
-                                {% endif %}
-                            </td>
+                                <td>
+                                    {% if staff.staff_profile %}
+                                        {% if staff.staff_profile.trek %}
+                                            {{ staff.staff_profile.trek.name }}
+                                        {% else %}
+                                            Not Assigned
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
 
-                            <td>
-                                {% if staff.staff_profile %}
-                                <a href="{{ url_for('blacklist_staff', staff_id=staff.staff_profile.id) }}"
-                                    class="danger-btn">
-                                        Blacklist
-                                </a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
+                                <td>
+                                    {% if staff.staff_profile %}
+                                    <a href="{{ url_for('assign_staff', staff_id=staff.staff_profile.id) }}"
+                                        class="primary-btn">
+                                            Assign Trek
+                                    </a>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if staff.staff_profile %}
+                                    <a href="{{ url_for('blacklist_staff', staff_id=staff.staff_profile.id) }}"
+                                        class="danger-btn">
+                                            Blacklist
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
                     {% endif %}
 
                     <!-- ================================================= -->

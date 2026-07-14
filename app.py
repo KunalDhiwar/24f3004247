@@ -155,12 +155,13 @@ def logout():
 
 
 @app.route("/admin_dashboard")
-@role_required("Admin")
+@role_required(("Admin"))
 def admin_dashboard():
 
     section = request.args.get("section", "pending")
     search = request.args.get("search", "").strip()
     page = request.args.get("page", 1, type=int)
+
 
     per_page = 10
     data = None
@@ -178,7 +179,6 @@ def admin_dashboard():
 
     elif section == "staff":
         query = Users.query.filter_by(role="Trek Staff")
-
         if search:
             query = query.filter(
                 (Users.name.ilike(f"%{search}%")) |
@@ -1105,6 +1105,8 @@ def trekker_dashboard():
 @role_required("Trekker")
 def book_trek(trek_id):
 
+    user_id = session.get("user_id")
+
     user = Users.query.get(user_id)
 
     if not user:
@@ -1295,8 +1297,10 @@ def book_trek(trek_id):
 
 
 @app.route('/cancel_booking/<int:booking_id>')
-@role_required("Trekkers")
+@role_required("Trekker")
 def cancel_booking(booking_id):
+
+    user_id = session.get("user_id")
 
     user = Users.query.get(user_id)
 

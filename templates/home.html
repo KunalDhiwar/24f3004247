@@ -39,7 +39,12 @@
       <!--Search form-->
       <div class="search-box">
             <form action="/search" method="GET">
-                  <input type="text" name="query" placeholder="Search trek, location....">
+                  <input
+                        type="text"
+                        name="query"
+                        placeholder="Search trek, location...."
+                        value="{{ search }}"
+                        >
 
                   <button type="submit">
                         Search
@@ -56,7 +61,7 @@
 
       {% if treks %}
             {% for trek in treks %}
-                  <a href="/trek/{{ trek.id }}" class="trek_link">
+                  <a href="{{ url_for('trek_info', trek_id=trek.id) }}" class="trek_link">
                   <div class="trek-card">
                         <h3>
                               {{ trek.name }}

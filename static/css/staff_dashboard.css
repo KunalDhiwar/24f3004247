@@ -732,3 +732,68 @@ body{
     margin-bottom:20px;
 
 }
+
+/* ==========================================================
+                FLASH MESSAGES
+   ========================================================== */
+
+
+.flash{
+
+    padding:12px;
+
+    border-radius:8px;
+
+    margin-bottom:20px;
+
+    text-align:center;
+
+    font-weight:bold;
+
+}
+
+
+
+/* Success */
+
+
+.flash.success{
+
+    background:#16a34a;
+
+}
+
+
+
+/* Danger */
+
+
+.flash.danger{
+
+    background:#dc2626;
+
+}
+
+
+
+/* Warning */
+
+
+.flash.warning{
+
+    background:#f59e0b;
+
+    color:black;
+
+}
+
+
+
+/* Info */
+
+
+.flash.info{
+
+    background:#0284c7;
+
+}
